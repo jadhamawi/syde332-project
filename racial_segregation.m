@@ -30,6 +30,9 @@ for i=1:n
     end
 end
 
+[row,col] = find(z(:,:,1)==0);
+pos_vacancies = [row col];
+
 figure,
 imagesc(z);
 colormap(map);
@@ -76,17 +79,21 @@ for k=1:max_iterations
                 friends = total_neighbours - not_like_me;
 
                 if friends/total_neighbours < F
-
-                    new_x = randi(n);
-                    new_y = randi(n);
-                    while z(new_x,new_y) ~= 0
-                        new_x = randi(n);
-                        new_y = randi(n);
-                    end
+                    
+                    idx = randperm(length(pos_vacancies));
+                    
+                    p = 1;
+                    
+                    new_x = pos_vacancies(idx(p),1);
+                    new_y = pos_vacancies(idx(p),2);
+                    disp('in da while loop')
 
                     z(new_x,new_y) = z(i,j);
                     z(i,j) = 0;
                     number_of_moves(k) = number_of_moves(k) + 1;
+                    pos_vacancies(idx(p),1) = i;
+                    pos_vacancies(idx(p),2) = j;
+                    
 
                 end
             end

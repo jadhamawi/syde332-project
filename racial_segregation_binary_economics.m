@@ -2,13 +2,16 @@
 % Racial Segregation Model Attempt
 
 % size of grid
-n = 10;
+n = 30;
 
 % proportion of vacancies
 vacanicies_proportion = 0.1;
 
 % number of races
 T = 3;
+
+% number of economic brackets
+E = 2;
 
 % colors
 map = [0 0 0; 1 0 0; 0 1 0; 0 0 1];
@@ -20,12 +23,13 @@ F = 4/8;
 max_iterations = 10000;
 
 % initialize
-z = zeros(n);
+z = zeros(n,n,3);
 
 for i=1:n
     for j=1:n
         if rand > vacanicies_proportion
-            z(i,j) = randi(T);
+            z(i,j,1) = randi(T);
+            z(i,j,2) = randi(E);
         end
     end
 end
@@ -34,9 +38,16 @@ end
 pos_vacancies = [row col];
 
 figure,
-imagesc(z);
+imagesc(z(:,:,1));
 colormap(map);
+title('race initializiation - binary income');
 axis('off');
+
+% figure,
+% imagesc(z(:,:,2));
+% colormap(map);
+% title('economics initializiation');
+% axis('off');
 
 number_of_moves = zeros(1,max_iterations);
 
@@ -77,8 +88,22 @@ for k=1:max_iterations
                 end
                 
                 friends = total_neighbours - not_like_me;
+                
+                % can I want to move because of race and I can move!
+                if friends/total_neighbours < F && z(i,j,2) == 2
 
-                if friends/total_neighbours < F
+%                     new_x = randi(n);
+%                     new_y = randi(n);
+%                     while z(new_x,new_y,1) ~= 0
+%                         new_x = randi(n);
+%                         new_y = randi(n);
+%                     end
+% 
+%                     z(new_x,new_y,1) = z(i,j,1);
+%                     z(new_x,new_y,2) = z(i,j,2);
+%                     z(i,j,1) = 0;
+%                     z(i,j,2) = 0;
+%                     number_of_moves(k) = number_of_moves(k) + 1;
                     
                     idx = randperm(length(pos_vacancies));
                     
@@ -92,7 +117,6 @@ for k=1:max_iterations
                     number_of_moves(k) = number_of_moves(k) + 1;
                     pos_vacancies(idx(p),1) = i;
                     pos_vacancies(idx(p),2) = j;
-                    
 
                 end
             end
@@ -113,9 +137,16 @@ for k=1:max_iterations
 end
 
 figure,
-imagesc(z);
+imagesc(z(:,:,1));
 colormap(map);
 axis('off');
+title('final by race  - binary income');
+
+% figure,
+% imagesc(z(:,:,2));
+% colormap(map);
+% axis('off');
+% title('final by economics');
 
 %% plot number of moves
 iterant = 1:max_iterations;

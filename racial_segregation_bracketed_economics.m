@@ -10,6 +10,9 @@ vacanicies_proportion = 0.1;
 % number of races
 T = 3;
 
+% number of economic brackets
+E = 3;
+
 % colors
 map = [0 0 0; 1 0 0; 0 1 0; 0 0 1];
 
@@ -20,13 +23,15 @@ F = 4/8;
 max_iterations = 10000;
 
 % initialize
-z = zeros(n);
+z = zeros(n,n,3);
 
 for i=1:n
     for j=1:n
         if rand > vacanicies_proportion
-            z(i,j) = randi(T);
+            z(i,j,1) = randi(T);
+            z(i,j,2) = randi(E);
         end
+        z(i,j,3) = randi(E);
     end
 end
 
@@ -34,9 +39,16 @@ end
 pos_vacancies = [row col];
 
 figure,
-imagesc(z);
+imagesc(z(:,:,1));
 colormap(map);
+title('race initializiation - bracketed income, housing prices random');
 axis('off');
+
+% figure,
+% imagesc(z(:,:,2));
+% colormap(map);
+% title('economics initializiation');
+% axis('off');
 
 number_of_moves = zeros(1,max_iterations);
 
@@ -79,27 +91,43 @@ for k=1:max_iterations
                 friends = total_neighbours - not_like_me;
 
                 if friends/total_neighbours < F
-                    
-                    idx = randperm(length(pos_vacancies));
-                    
-                    p = 1;
-                    
-                    new_x = pos_vacancies(idx(p),1);
-                    new_y = pos_vacancies(idx(p),2);
 
-                    z(new_x,new_y) = z(i,j);
-                    z(i,j) = 0;
-                    number_of_moves(k) = number_of_moves(k) + 1;
-                    pos_vacancies(idx(p),1) = i;
-                    pos_vacancies(idx(p),2) = j;
+                    new_x = randi(n);
+                    new_y = randi(n);
                     
-
+                    while (z(new_x,new_y,1) ~= 0) %%&& (z(new_x,new_y,3) > z(i,j,2))
+                        new_x = randi(n);
+                        new_y = randi(n);
+                        disp('in da while loop')
+                    end
+                    
+                    if z(new_x,new_y,3) <= z(i,j,2)
+                        z(new_x,new_y,1) = z(i,j,1);
+                        z(new_x,new_y,2) = z(i,j,2);
+                        z(i,j,1) = 0;
+                        z(i,j,2) = 0;
+                        number_of_moves(k) = number_of_moves(k) + 1;
+                    end
+                    
+%                     idx = randperm(length(pos_vacancies));
+%                     
+%                     p = 1;
+%                     
+%                     new_x = pos_vacancies(idx(p),1);
+%                     new_y = pos_vacancies(idx(p),2);
+% 
+%                     z(new_x,new_y) = z(i,j);
+%                     z(i,j) = 0;
+%                     number_of_moves(k) = number_of_moves(k) + 1;
+%                     pos_vacancies(idx(p),1) = i;
+%                     pos_vacancies(idx(p),2) = j;
+                    
                 end
             end
-%             imagesc(z);
+%             imagesc(z(:,:,1));
 %             colormap(map);
 %             axis('off');
-%             pause(0.0001);
+%             pause(0.001);
 
         end
     end
@@ -113,11 +141,20 @@ for k=1:max_iterations
 end
 
 figure,
-imagesc(z);
+imagesc(z(:,:,1));
 colormap(map);
 axis('off');
+title('final by race - bracketed income, housing prices random');
+
+% figure,
+% imagesc(z(:,:,2));
+% colormap(map);
+% axis('off');
+% title('final by economics');
 
 %% plot number of moves
 iterant = 1:max_iterations;
 figure,
 plot(log10(iterant), log10(number_of_moves));
+xlabel('iteration'),ylabel('number of moves');
+

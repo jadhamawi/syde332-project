@@ -53,6 +53,7 @@ axis('off');
 number_of_moves = zeros(1,max_iterations);
 
 %% run simulation
+seg = [];
 total_neighbours = 8;
 
 for k=1:max_iterations
@@ -98,7 +99,7 @@ for k=1:max_iterations
                     while (z(new_x,new_y,1) ~= 0) %%&& (z(new_x,new_y,3) > z(i,j,2))
                         new_x = randi(n);
                         new_y = randi(n);
-                        disp('in da while loop')
+               
                     end
                     
                     if z(new_x,new_y,3) <= z(i,j,2)
@@ -131,14 +132,92 @@ for k=1:max_iterations
 
         end
     end
+    
     if number_of_moves(k) == 0
         disp('number of iterations to convergence: ')
         disp(k);
         disp('total number of moves to convergence: ')
-        disp(sum(number_of_moves))
+        disp(sum(number_of_moves));
         break;
     end
+    
+    % Calculate segregation
+    SAME = [];
+
+    for i=1:n
+        for j=1:n
+
+            race = z(i,j,1);
+            s = 0;
+
+            % Check that z(i,j,1) isn't a vacancy
+            if race
+
+                if i > 1 
+                    if z(i-1,j,1) == race
+                        s = s + 1;
+                    end
+                    
+                    if j > 1 
+                        if z(i-1,j-1,1) == race
+                            s = s + 1;
+                        end
+                    end
+                    
+                    if j < n 
+                        if z(i-1, j+1, 1) == race
+                            s = s + 1;
+                        end
+                    end
+                end
+
+                if i < n 
+                    if z(i+1,j,1) == race
+                        s = s + 1;
+                    end
+                    
+                    if j > 1 
+                        if z(i+1,j-1,1) == race
+                            s = s + 1;
+                        end
+                    end
+                    
+                    if j < n
+                        if z(i+1, j+1, 1) == race
+                            s = s + 1;
+                        end
+                    end
+ 
+                end
+
+                if j > 1 
+                    if z(i,j-1,1) == race
+                        s = s + 1;
+                    end
+                end
+
+                if j < n 
+                    if z(i,j+1,1) == race
+                        s = s + 1;
+                    end
+                end 
+                
+            end
+            
+%             SAME = [SAME;s/num_neighbours];
+        end
+    end
+    
+%     avg_same = sum(SAME)/length(SAME);
+%     seg = [seg; avg_same*100];
+%     disp(seg);
 end
+
+% disp(length(seg));
+% 
+% figure,
+% plot(k, seg);
+% xlabel('iteration'), ylabel('segregation percentage');
 
 figure,
 imagesc(z(:,:,1));
@@ -151,6 +230,7 @@ title('final by race - bracketed income, housing prices random');
 % colormap(map);
 % axis('off');
 % title('final by economics');
+
 
 %% plot number of moves
 iterant = 1:max_iterations;

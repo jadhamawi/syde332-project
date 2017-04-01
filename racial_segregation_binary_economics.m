@@ -49,7 +49,7 @@ axis('off');
 % title('economics initializiation');
 % axis('off');
 
-number_of_moves = zeros(1,max_iterations);
+% number_of_moves = zeros(1,max_iterations);
 
 %% run simulation
 total_neighbours = 8;

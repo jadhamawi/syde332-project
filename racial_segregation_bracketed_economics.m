@@ -17,7 +17,7 @@ E = 3;
 map = [0 0 0; 1 0 0; 0 1 0; 0 0 1];
 
 % racial dispreference parameter
-% minimum fraction of friends that I need to be satisfied
+% minimum fraction of friends that I need to be satisfied (samenes)
 F = 4/8;
 
 max_iterations = 10000;

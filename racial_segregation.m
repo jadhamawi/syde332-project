@@ -2,20 +2,20 @@
 % Racial Segregation Model Attempt
 
 % size of grid
-n = 10;
+n = 40;
 
 % proportion of vacancies
 vacanicies_proportion = 0.1;
 
 % number of races
-T = 3;
+T = 2;
 
 % colors
 map = [0 0 0; 1 0 0; 0 1 0; 0 0 1];
 
 % racial dispreference parameter
 % minimum fraction of friends that I need to be satisfied
-F = 4/8;
+sameness = 7/8;
 
 max_iterations = 10000;
 
@@ -78,7 +78,7 @@ for k=1:max_iterations
                 
                 friends = total_neighbours - not_like_me;
 
-                if friends/total_neighbours < F
+                if friends/total_neighbours < sameness
                     
                     idx = randperm(length(pos_vacancies));
                     

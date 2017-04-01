@@ -15,7 +15,7 @@ map = [0 0 0; 1 0 0; 0 1 0; 0 0 1];
 
 % racial dispreference parameter
 % minimum fraction of friends that I need to be satisfied
-sameness = 7/8;
+sameness = 4/8;
 
 max_iterations = 10000;
 
@@ -42,6 +42,7 @@ number_of_moves = zeros(1,max_iterations);
 
 %% run simulation
 total_neighbours = 8;
+seg_index = [];
 
 for k=1:max_iterations
     x = randperm(n);
@@ -103,16 +104,15 @@ for k=1:max_iterations
 
         end
     end
-%     if number_of_moves(k) == 0
-%         disp('number of iterations to convergence: ')
-%         disp(k);
-%         disp('total number of moves to convergence: ')
-%         disp(sum(number_of_moves))
-%         break;
-%     end
+    if number_of_moves(k) == 0
+        disp('number of iterations to convergence: ')
+        disp(k);
+        disp('total number of moves to convergence: ')
+        disp(sum(number_of_moves))
+        break;
+    end
     
     SAME = [];
-    temp=[];
 
     for i=1:n
         for j=1:n
@@ -207,23 +207,29 @@ for k=1:max_iterations
                 
             end
             
-            SAME = [SAME;s/num_neighbours];
+            SAME(i,j) = s/num_neighbours;
         end
     end
-    temp = [temp; mean(SAME)];
-    disp((mean(SAME)));
+    
+    %mean(mean(SAME))
+    seg_index = [seg_index, (mean(mean(SAME))-0.5)*2];
+    
 end
+
+seg_index
 
 figure,
 imagesc(z);
 colormap(map);
+title('Simulation results of Schelling model');
 axis('off');
 
 figure,
-plot(1:k,temp);
-title('segregation temp');
+plot(seg_index);
+title('Segregation index');
+axis([0 inf 0 1])
 
 %% plot number of moves
-iterant = 1:max_iterations;
-figure,
-plot(log10(iterant), log10(number_of_moves));
+% iterant = 1:max_iterations;
+% figure,
+% plot(log10(iterant), log10(number_of_moves));

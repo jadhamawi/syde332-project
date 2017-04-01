@@ -15,7 +15,7 @@ map = [0 0 0; 1 0 0; 0 1 0; 0 0 1];
 
 % racial dispreference parameter
 % minimum fraction of friends that I need to be satisfied
-sameness = 7/8;
+sameness = 4/8;
 
 max_iterations = 10000;
 
@@ -42,6 +42,7 @@ number_of_moves = zeros(1,max_iterations);
 
 %% run simulation
 total_neighbours = 8;
+seg_index = [];
 
 for k=1:max_iterations
     x = randperm(n);
@@ -110,14 +111,125 @@ for k=1:max_iterations
         disp(sum(number_of_moves))
         break;
     end
+    
+    SAME = [];
+
+    for i=1:n
+        for j=1:n
+
+            race = z(i,j,1);
+            s = 0;
+
+            % Check that z(i,j,1) isn't a vacancy
+            if race
+                num_neighbours = 0;
+
+                if i > 1 
+                    if z(i-1,j,1) == race
+                        s = s + 1;
+                    end
+                    
+                    if z(i-1,j,1)
+                        num_neighbours = num_neighbours + 1;
+                    end
+                    
+                    if j > 1 
+                        if z(i-1,j-1,1) == race
+                            s = s + 1;
+                        end
+                        
+                        if z(i-1,j-1,1)
+                            num_neighbours = num_neighbours + 1;
+                        end
+                    end
+                    
+                    if j < n 
+                        if z(i-1, j+1, 1) == race
+                            s = s + 1;
+                        end
+                        
+                        if z(i-1, j+1, 1)
+                            num_neighbours = num_neighbours + 1;
+                        end
+                    end
+                end
+
+                if i < n 
+                    if z(i+1,j,1) == race
+                        s = s + 1;
+                    end
+                    
+                    if z(i+1, j, 1)
+                        num_neighbours = num_neighbours + 1;
+                    end
+                    
+                    if j > 1 
+                        if z(i+1,j-1,1) == race
+                            s = s + 1;
+                        end
+                        
+                        if z(i+1, j-1, 1)
+                            num_neighbours = num_neighbours + 1;
+                        end
+                    end
+                    
+                    if j < n
+                        if z(i+1, j+1, 1) == race
+                            s = s + 1;
+                        end
+                        
+                        if z(i+1, j+1, 1)
+                            num_neighbours = num_neighbours + 1;
+                        end
+                    end
+ 
+                end
+
+                if j > 1 
+                    if z(i,j-1,1) == race
+                        s = s + 1;
+                    end
+                    
+                    if z(i, j-1, 1)
+                        num_neighbours = num_neighbours + 1;
+                    end
+                end
+
+                if j < n 
+                    if z(i,j+1,1) == race
+                        s = s + 1;
+                    end
+                    
+                    if z(i, j+1, 1)
+                        num_neighbours = num_neighbours + 1;
+                    end
+                end 
+                
+            end
+            
+            SAME(i,j) = s/num_neighbours;
+        end
+    end
+    
+    %mean(mean(SAME))
+    seg_index = [seg_index, (mean(mean(SAME))-0.5)*2];
+    
 end
+
+seg_index
 
 figure,
 imagesc(z);
 colormap(map);
+title('Simulation results of Schelling model');
 axis('off');
 
-%% plot number of moves
-iterant = 1:max_iterations;
 figure,
-plot(log10(iterant), log10(number_of_moves));
+plot(seg_index);
+title('Segregation index');
+axis([0 inf 0 1])
+
+%% plot number of moves
+% iterant = 1:max_iterations;
+% figure,
+% plot(log10(iterant), log10(number_of_moves));

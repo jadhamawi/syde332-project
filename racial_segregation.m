@@ -8,7 +8,7 @@ n = 10;
 vacanicies_proportion = 0.1;
 
 % number of races
-T = 3;
+T = 2;
 
 % colors
 map = [0 0 0; 1 0 0; 0 1 0; 0 0 1];
@@ -103,19 +103,125 @@ for k=1:max_iterations
 
         end
     end
-    if number_of_moves(k) == 0
-        disp('number of iterations to convergence: ')
-        disp(k);
-        disp('total number of moves to convergence: ')
-        disp(sum(number_of_moves))
-        break;
+%     if number_of_moves(k) == 0
+%         disp('number of iterations to convergence: ')
+%         disp(k);
+%         disp('total number of moves to convergence: ')
+%         disp(sum(number_of_moves))
+%         break;
+%     end
+    
+    SAME = [];
+    temp=[];
+
+    for i=1:n
+        for j=1:n
+
+            race = z(i,j,1);
+            s = 0;
+
+            % Check that z(i,j,1) isn't a vacancy
+            if race
+                num_neighbours = 0;
+
+                if i > 1 
+                    if z(i-1,j,1) == race
+                        s = s + 1;
+                    end
+                    
+                    if z(i-1,j,1)
+                        num_neighbours = num_neighbours + 1;
+                    end
+                    
+                    if j > 1 
+                        if z(i-1,j-1,1) == race
+                            s = s + 1;
+                        end
+                        
+                        if z(i-1,j-1,1)
+                            num_neighbours = num_neighbours + 1;
+                        end
+                    end
+                    
+                    if j < n 
+                        if z(i-1, j+1, 1) == race
+                            s = s + 1;
+                        end
+                        
+                        if z(i-1, j+1, 1)
+                            num_neighbours = num_neighbours + 1;
+                        end
+                    end
+                end
+
+                if i < n 
+                    if z(i+1,j,1) == race
+                        s = s + 1;
+                    end
+                    
+                    if z(i+1, j, 1)
+                        num_neighbours = num_neighbours + 1;
+                    end
+                    
+                    if j > 1 
+                        if z(i+1,j-1,1) == race
+                            s = s + 1;
+                        end
+                        
+                        if z(i+1, j-1, 1)
+                            num_neighbours = num_neighbours + 1;
+                        end
+                    end
+                    
+                    if j < n
+                        if z(i+1, j+1, 1) == race
+                            s = s + 1;
+                        end
+                        
+                        if z(i+1, j+1, 1)
+                            num_neighbours = num_neighbours + 1;
+                        end
+                    end
+ 
+                end
+
+                if j > 1 
+                    if z(i,j-1,1) == race
+                        s = s + 1;
+                    end
+                    
+                    if z(i, j-1, 1)
+                        num_neighbours = num_neighbours + 1;
+                    end
+                end
+
+                if j < n 
+                    if z(i,j+1,1) == race
+                        s = s + 1;
+                    end
+                    
+                    if z(i, j+1, 1)
+                        num_neighbours = num_neighbours + 1;
+                    end
+                end 
+                
+            end
+            
+            SAME = [SAME;s/num_neighbours];
+        end
     end
+    temp = [temp; mean(SAME)];
+    disp((mean(SAME)));
 end
 
 figure,
 imagesc(z);
 colormap(map);
 axis('off');
+
+figure,
+plot(1:k,temp);
+title('segregation temp');
 
 %% plot number of moves
 iterant = 1:max_iterations;

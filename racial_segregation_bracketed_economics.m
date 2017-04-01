@@ -137,7 +137,7 @@ for k=1:max_iterations
         disp('number of iterations to convergence: ')
         disp(k);
         disp('total number of moves to convergence: ')
-        disp(sum(number_of_moves));
+        disp(sum(number_of_moves))
         break;
     end
     
@@ -152,21 +152,34 @@ for k=1:max_iterations
 
             % Check that z(i,j,1) isn't a vacancy
             if race
+                num_neighbours = 0;
 
                 if i > 1 
                     if z(i-1,j,1) == race
                         s = s + 1;
                     end
                     
+                    if z(i-1,j,1)
+                        num_neighbours = num_neighbours + 1;
+                    end
+                    
                     if j > 1 
                         if z(i-1,j-1,1) == race
                             s = s + 1;
+                        end
+                        
+                        if z(i-1,j-1,1)
+                            num_neighbours = num_neighbours + 1;
                         end
                     end
                     
                     if j < n 
                         if z(i-1, j+1, 1) == race
                             s = s + 1;
+                        end
+                        
+                        if z(i-1, j+1, 1)
+                            num_neighbours = num_neighbours + 1;
                         end
                     end
                 end
@@ -176,15 +189,27 @@ for k=1:max_iterations
                         s = s + 1;
                     end
                     
+                    if z(i+1, j, 1)
+                        num_neighbours = num_neighbours + 1;
+                    end
+                    
                     if j > 1 
                         if z(i+1,j-1,1) == race
                             s = s + 1;
+                        end
+                        
+                        if z(i+1, j-1, 1)
+                            num_neighbours = num_neighbours + 1;
                         end
                     end
                     
                     if j < n
                         if z(i+1, j+1, 1) == race
                             s = s + 1;
+                        end
+                        
+                        if z(i+1, j+1, 1)
+                            num_neighbours = num_neighbours + 1;
                         end
                     end
  
@@ -194,22 +219,30 @@ for k=1:max_iterations
                     if z(i,j-1,1) == race
                         s = s + 1;
                     end
+                    
+                    if z(i, j-1, 1)
+                        num_neighbours = num_neighbours + 1;
+                    end
                 end
 
                 if j < n 
                     if z(i,j+1,1) == race
                         s = s + 1;
                     end
+                    
+                    if z(i, j+1, 1)
+                        num_neighbours = num_neighbours + 1;
+                    end
                 end 
                 
             end
             
-%             SAME = [SAME;s/num_neighbours];
+            SAME = [SAME;s/num_neighbours];
         end
     end
     
-%     avg_same = sum(SAME)/length(SAME);
-%     seg = [seg; avg_same*100];
+    disp((mean(SAME)));
+    seg = [seg; avg_same*100];
 %     disp(seg);
 end
 

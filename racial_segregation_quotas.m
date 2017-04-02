@@ -4,6 +4,9 @@
 % size of grid
 n = 40;
 
+% neighbourhood radius
+radius = 1;
+
 % proportion of vacancies
 vacanicies_proportion = 0.1;
 
@@ -53,7 +56,7 @@ for k=1:max_iterations
                 
                 friends = total_neighbours - not_like_me;
 
-                if friends/total_neighbours < sameness %going to move!
+                if friends/total_neighbours < sameness % want to move!
                     
                     idx = randperm(length(pos_vacancies));
                     
@@ -61,12 +64,23 @@ for k=1:max_iterations
                     
                     new_x = pos_vacancies(idx(p),1);
                     new_y = pos_vacancies(idx(p),2);
-
-                    z(new_x,new_y) = z(i,j);
-                    z(i,j) = 0;
-                    number_of_moves(k) = number_of_moves(k) + 1;
-                    pos_vacancies(idx(p),1) = i;
-                    pos_vacancies(idx(p),2) = j;
+                    meets_quota = check_quota(z,i,j,new_x,new_y,T,radius);
+                    
+                    while meets_quota ~= 1
+                        p = p+1;
+                        new_x = pos_vacancies(idx(p),1);
+                        new_y = pos_vacancies(idx(p),2);
+                        meets_quota = check_quota(z,i,j,new_x,new_y,T,radius);
+                    end
+                    
+                    if meets_quota && p <= length(pos_vacancies)
+                        z(new_x,new_y) = z(i,j);
+                        z(i,j) = 0;
+                        number_of_moves(k) = number_of_moves(k) + 1;
+                        pos_vacancies(idx(p),1) = i;
+                        pos_vacancies(idx(p),2) = j;
+                    end
+                        
 
                 end
             end
@@ -87,11 +101,11 @@ for k=1:max_iterations
 end
 
 seg_index
-
+%% plots
 figure,
 imagesc(z);
 colormap(map);
-title(['Simulation results of Schelling model, sameness = ' num2str(sameness)]);
+title(['Simulation results of quota model, sameness = ' num2str(sameness) ', radius = ' num2str(radius)]);
 axis('off');
 
 figure,

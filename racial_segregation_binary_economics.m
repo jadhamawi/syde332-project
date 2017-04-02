@@ -20,7 +20,7 @@ map = [0 0 0; 1 0 0; 0 1 0; 0 0 1];
 % minimum fraction of friends that I need to be satisfied
 F = 4/8;
 
-max_iterations = 10000;
+max_iterations = 2000;
 
 % initialize
 z = zeros(n,n,3);
@@ -53,57 +53,18 @@ axis('off');
 
 %% run simulation
 total_neighbours = 8;
+seg_index=[];
 
 for k=1:max_iterations
-    x = randperm(n);
-    for i=x
-        y = randperm(n);
-        for j=y
+    for i=randperm(n)
+        for j=randperm(n)
             if z(i,j)~=0
-                not_like_me = 0;
-
-                if i~=1 && z(i-1,j) ~= z(i,j) && z(i-1,j) ~=0
-                    not_like_me = not_like_me +1;
-                end
-                if i~=n && z(i+1,j) ~= z(i,j) && z(i+1,j) ~=0
-                    not_like_me = not_like_me +1;
-                end
-                if j~=1 && z(i,j-1) ~= z(i,j) && z(i,j-1) ~=0
-                    not_like_me = not_like_me +1;
-                end
-                if j~=n && z(i,j+1) ~= z(i,j) && z(i,j+1) ~=0
-                    not_like_me = not_like_me +1;
-                end
-                if i~=1 && j~=1 && z(i-1,j-1) ~= z(i,j) && z(i-1,j-1) ~= 0
-                    not_like_me = not_like_me +1;
-                end
-                if i~=1 && j~=n && z(i-1,j+1) ~= z(i,j) && z(i-1,j+1) ~= 0
-                    not_like_me = not_like_me +1;
-                end
-                if i~=n && j~=1 && z(i+1,j-1) ~= z(i,j) && z(i+1,j-1) ~= 0
-                    not_like_me = not_like_me +1;
-                end
-                if i~=n && j~=n && z(i+1,j+1) ~= z(i,j) && z(i+1,j+1) ~= 0
-                    not_like_me = not_like_me +1;
-                end
+                not_like_me = count_not_like_me(z,i,j);
                 
                 friends = total_neighbours - not_like_me;
                 
                 % can I want to move because of race and I can move!
                 if friends/total_neighbours < F && z(i,j,2) == 2
-
-%                     new_x = randi(n);
-%                     new_y = randi(n);
-%                     while z(new_x,new_y,1) ~= 0
-%                         new_x = randi(n);
-%                         new_y = randi(n);
-%                     end
-% 
-%                     z(new_x,new_y,1) = z(i,j,1);
-%                     z(new_x,new_y,2) = z(i,j,2);
-%                     z(i,j,1) = 0;
-%                     z(i,j,2) = 0;
-%                     number_of_moves(k) = number_of_moves(k) + 1;
                     
                     idx = randperm(length(pos_vacancies));
                     
@@ -127,6 +88,9 @@ for k=1:max_iterations
 
         end
     end
+    
+    seg_index = [seg_index, calculate_seg_index(z)];
+    
     if number_of_moves(k) == 0
         disp('number of iterations to convergence: ')
         disp(k);
@@ -134,7 +98,10 @@ for k=1:max_iterations
         disp(sum(number_of_moves))
         break;
     end
+    
 end
+
+seg_index
 
 figure,
 imagesc(z(:,:,1));
@@ -149,6 +116,6 @@ title('final by race  - binary income');
 % title('final by economics');
 
 %% plot number of moves
-iterant = 1:max_iterations;
-figure,
-plot(log10(iterant), log10(number_of_moves));
+% iterant = 1:max_iterations;
+% figure,
+% plot(log10(iterant), log10(number_of_moves));

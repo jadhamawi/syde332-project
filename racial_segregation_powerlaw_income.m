@@ -133,32 +133,7 @@ for k=1:max_iterations
         y = randperm(n);
         for j=y
             if z(i,j)~=0
-                not_like_me = 0;
-
-                if i~=1 && z(i-1,j) ~= z(i,j) && z(i-1,j) ~=0
-                    not_like_me = not_like_me +1;
-                end
-                if i~=n && z(i+1,j) ~= z(i,j) && z(i+1,j) ~=0
-                    not_like_me = not_like_me +1;
-                end
-                if j~=1 && z(i,j-1) ~= z(i,j) && z(i,j-1) ~=0
-                    not_like_me = not_like_me +1;
-                end
-                if j~=n && z(i,j+1) ~= z(i,j) && z(i,j+1) ~=0
-                    not_like_me = not_like_me +1;
-                end
-                if i~=1 && j~=1 && z(i-1,j-1) ~= z(i,j) && z(i-1,j-1) ~= 0
-                    not_like_me = not_like_me +1;
-                end
-                if i~=1 && j~=n && z(i-1,j+1) ~= z(i,j) && z(i-1,j+1) ~= 0
-                    not_like_me = not_like_me +1;
-                end
-                if i~=n && j~=1 && z(i+1,j-1) ~= z(i,j) && z(i+1,j-1) ~= 0
-                    not_like_me = not_like_me +1;
-                end
-                if i~=n && j~=n && z(i+1,j+1) ~= z(i,j) && z(i+1,j+1) ~= 0
-                    not_like_me = not_like_me +1;
-                end
+                not_like_me = count_not_like_me(z,i,j);
                 
                 friends = total_neighbours - not_like_me;
 
@@ -228,6 +203,9 @@ for k=1:max_iterations
         end
     end
     
+    % determine segregation index
+    seg_index = [seg_index, calculate_seg_index(z)];
+    
     if number_of_moves(k) == 0
         disp('number of iterations to convergence: ')
         disp(k);
@@ -236,110 +214,6 @@ for k=1:max_iterations
         break;
     end
     
-    
-    % determine segregation index
-    SAME = [];
-
-    for i=1:n
-        for j=1:n
-
-            race = z(i,j,1);
-            s = 0;
-
-            % Check that z(i,j,1) isn't a vacancy
-            if race
-                num_neighbours = 0;
-
-                if i > 1 
-                    if z(i-1,j,1) == race
-                        s = s + 1;
-                    end
-                    
-                    if z(i-1,j,1)
-                        num_neighbours = num_neighbours + 1;
-                    end
-                    
-                    if j > 1 
-                        if z(i-1,j-1,1) == race
-                            s = s + 1;
-                        end
-                        
-                        if z(i-1,j-1,1)
-                            num_neighbours = num_neighbours + 1;
-                        end
-                    end
-                    
-                    if j < n 
-                        if z(i-1, j+1, 1) == race
-                            s = s + 1;
-                        end
-                        
-                        if z(i-1, j+1, 1)
-                            num_neighbours = num_neighbours + 1;
-                        end
-                    end
-                end
-
-                if i < n 
-                    if z(i+1,j,1) == race
-                        s = s + 1;
-                    end
-                    
-                    if z(i+1, j, 1)
-                        num_neighbours = num_neighbours + 1;
-                    end
-                    
-                    if j > 1 
-                        if z(i+1,j-1,1) == race
-                            s = s + 1;
-                        end
-                        
-                        if z(i+1, j-1, 1)
-                            num_neighbours = num_neighbours + 1;
-                        end
-                    end
-                    
-                    if j < n
-                        if z(i+1, j+1, 1) == race
-                            s = s + 1;
-                        end
-                        
-                        if z(i+1, j+1, 1)
-                            num_neighbours = num_neighbours + 1;
-                        end
-                    end
- 
-                end
-
-                if j > 1 
-                    if z(i,j-1,1) == race
-                        s = s + 1;
-                    end
-                    
-                    if z(i, j-1, 1)
-                        num_neighbours = num_neighbours + 1;
-                    end
-                end
-
-                if j < n 
-                    if z(i,j+1,1) == race
-                        s = s + 1;
-                    end
-                    
-                    if z(i, j+1, 1)
-                        num_neighbours = num_neighbours + 1;
-                    end
-                end 
-                
-            end
-            
-            SAME(i,j) = s/num_neighbours;
-        end
-    end
-    
-    mean(mean(SAME));
-    seg_index = [seg_index, (mean(mean(SAME))-0.5)*2];
-     
 end
 
 seg_index

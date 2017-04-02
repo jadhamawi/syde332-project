@@ -21,9 +21,9 @@ map = [0 0 0; 1 0 0; 0 1 0; 0 0 1];
 
 % racial dispreference parameter
 % minimum fraction of friends that I need to be satisfied (samenes)
-sameness = 4/8;
+sameness = 5/8;
 
-max_iterations = 2000;
+max_iterations = 10000;
 
 % initialize
 z = zeros(n,n,3);
@@ -32,46 +32,47 @@ for i=1:n
     for j=1:n
         if rand > vacanicies_proportion
             z(i,j,1) = randi(T);
-            if z(i,j,1) == 1 %white people have more money
-                if rand < 0.5
-                    z(i,j,2) = 1; % individual wealth
-                elseif rand < 0.8
-                    z(i,j,2) = 2;
-                elseif rand < 0.95
-                    z(i,j,2) = 3;
-                elseif rand < 0.99
-                    z(i,j,2) = 4;
-                else 
-                    z(i,j,2) = 5;
-                end
-            elseif z(i,j,2) == 2 % black people tend to be poorer
-                if rand < 0.7
-                    z(i,j,2) = 1; % individual wealth
-                elseif rand < 0.9
-                    z(i,j,2) = 2;
-                elseif rand < 0.97
-                    z(i,j,2) = 3;
-                elseif rand < 0.995
-                    z(i,j,2) = 4;
-                else 
-                    z(i,j,2) = 5;
+            if rand < 0.5
+                z(i,j,2) = 1; % individual wealth
+            elseif rand < 0.8
+                z(i,j,2) = 2;
+            elseif rand < 0.95
+                z(i,j,2) = 3;
+            elseif rand < 0.99
+                z(i,j,2) = 4;
+            else 
+                z(i,j,2) = 5;
+            end
+        end
+    end
+end
+
+prices = [5, 4, 4, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1];
+
+for k=0:3
+    base_x = k*10;
+    for l=0:3
+        base_y = l*10;
+        housing_price = 0;
+        % power law housing price
+        housing_price = prices(randi((n/10)*(n/10)));
+        for i=1:n/4
+            for j=1:n/4
+                if rand > vacanicies_proportion
+                    z(base_x+i, base_y+j, 3) = housing_price;
+                else
+                   z(base_x+i, base_y+j, 3) = 0; 
                 end
             end
         end
-        
-        % power law housing prices, fit to the the white race
-        if rand < 0.5
-            z(i,j,3) = 1; % home prices
-        elseif rand < 0.8
-            z(i,j,3) = 2;
-        elseif rand < 0.95
-            z(i,j,3) = 3;
-        elseif rand < 0.99
-            z(i,j,3) = 4;
-        else 
-            z(i,j,3) = 5;
-        end
-        
+    end
+end
+
+
+imagesc(z(:,:,3));
+colormap();
+axis('off');
+
         % random housing
         %z(i,j,3) = randi(E);
         
@@ -115,11 +116,7 @@ for i=1:n
 %             z(i,j,3) = 5;
 %         end
             
-        
-        
-    end
-end
-
+              
 [row,col] = find(z(:,:,1)==0);
 pos_vacancies = [row col];
 
@@ -147,7 +144,32 @@ for k=1:max_iterations
         y = randperm(n);
         for j=y
             if z(i,j)~=0
-                not_like_me = count_not_like_me(z,i,j);
+                not_like_me = 0;
+
+                if i~=1 && z(i-1,j) ~= z(i,j) && z(i-1,j) ~=0
+                    not_like_me = not_like_me +1;
+                end
+                if i~=n && z(i+1,j) ~= z(i,j) && z(i+1,j) ~=0
+                    not_like_me = not_like_me +1;
+                end
+                if j~=1 && z(i,j-1) ~= z(i,j) && z(i,j-1) ~=0
+                    not_like_me = not_like_me +1;
+                end
+                if j~=n && z(i,j+1) ~= z(i,j) && z(i,j+1) ~=0
+                    not_like_me = not_like_me +1;
+                end
+                if i~=1 && j~=1 && z(i-1,j-1) ~= z(i,j) && z(i-1,j-1) ~= 0
+                    not_like_me = not_like_me +1;
+                end
+                if i~=1 && j~=n && z(i-1,j+1) ~= z(i,j) && z(i-1,j+1) ~= 0
+                    not_like_me = not_like_me +1;
+                end
+                if i~=n && j~=1 && z(i+1,j-1) ~= z(i,j) && z(i+1,j-1) ~= 0
+                    not_like_me = not_like_me +1;
+                end
+                if i~=n && j~=n && z(i+1,j+1) ~= z(i,j) && z(i+1,j+1) ~= 0
+                    not_like_me = not_like_me +1;
+                end
                 
                 friends = total_neighbours - not_like_me;
 
@@ -217,9 +239,6 @@ for k=1:max_iterations
         end
     end
     
-        
-    seg_index = [seg_index, calculate_seg_index(z)];
-    
     if number_of_moves(k) == 0
         disp('number of iterations to convergence: ')
         disp(k);
@@ -228,19 +247,36 @@ for k=1:max_iterations
         break;
     end
     
-
+    seg_index = [seg_index, calculate_seg_index(z)];
      
 end
 
-seg_index
+seg_index_bounded = [];
 
-%% plots
+for k=0:3
+    base_x = k*10;
+    for l=0:3
+        base_y = l*10;
+        z_bounded = zeros(10,10);
+        
+        for i=1:10
+            for j=1:10
+                z_bounded(i, j) = z(base_x+i, base_y+j, 1);
+            end
+        end
+        
+        seg_index_bounded = [seg_index_bounded, calculate_seg_index(z_bounded)];
+    end
+end
+
+seg_index
+seg_index_bounded
 
 figure,
 imagesc(z(:,:,1));
 colormap(map);
 axis('off');
-title('final by race - power law income, power law housing prices, income disparity');
+title('final by race - power law income, power law housing prices');
 
 figure,
 plot(seg_index);

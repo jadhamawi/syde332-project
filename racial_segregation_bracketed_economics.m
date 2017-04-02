@@ -58,37 +58,10 @@ seg_index = [];
 total_neighbours = 8;
 
 for k=1:max_iterations
-    x = randperm(n);
-    for i=x
-        y = randperm(n);
-        for j=y
+    for i=randperm(n);
+        for j=randperm(n);
             if z(i,j)~=0
-                not_like_me = 0;
-
-                if i~=1 && z(i-1,j) ~= z(i,j) && z(i-1,j) ~=0
-                    not_like_me = not_like_me +1;
-                end
-                if i~=n && z(i+1,j) ~= z(i,j) && z(i+1,j) ~=0
-                    not_like_me = not_like_me +1;
-                end
-                if j~=1 && z(i,j-1) ~= z(i,j) && z(i,j-1) ~=0
-                    not_like_me = not_like_me +1;
-                end
-                if j~=n && z(i,j+1) ~= z(i,j) && z(i,j+1) ~=0
-                    not_like_me = not_like_me +1;
-                end
-                if i~=1 && j~=1 && z(i-1,j-1) ~= z(i,j) && z(i-1,j-1) ~= 0
-                    not_like_me = not_like_me +1;
-                end
-                if i~=1 && j~=n && z(i-1,j+1) ~= z(i,j) && z(i-1,j+1) ~= 0
-                    not_like_me = not_like_me +1;
-                end
-                if i~=n && j~=1 && z(i+1,j-1) ~= z(i,j) && z(i+1,j-1) ~= 0
-                    not_like_me = not_like_me +1;
-                end
-                if i~=n && j~=n && z(i+1,j+1) ~= z(i,j) && z(i+1,j+1) ~= 0
-                    not_like_me = not_like_me +1;
-                end
+                not_like_me = count_not_like_me(z,i,j);
                 
                 friends = total_neighbours - not_like_me;
 
@@ -157,12 +130,16 @@ for k=1:max_iterations
         end
     end
     
+    % determine segregation index
+    seg_index = [seg_index, calculate_seg_index(z)];
+    
     if number_of_moves(k) == 0
         disp('number of iterations to convergence: ')
         disp(k);
         disp('total number of moves to convergence: ')
         disp(sum(number_of_moves))
         break;
+<<<<<<< HEAD
     end
     
     
@@ -269,6 +246,9 @@ for k=1:max_iterations
     mean(mean(SAME));
     seg_index = [seg_index, (mean(mean(SAME))-0.5)*T*100];
     
+=======
+    end    
+>>>>>>> 44659116a77d89befbdba47cb5f47bbb4405a114
     
 end
 

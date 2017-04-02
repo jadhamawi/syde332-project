@@ -2,13 +2,13 @@
 % Racial Segregation Model Attempt
 
 % size of grid
-n = 30;
+n = 40;
 
 % proportion of vacancies
 vacanicies_proportion = 0.1;
 
 % number of races
-T = 3;
+T = 2;
 
 % number of economic brackets
 E = 2;

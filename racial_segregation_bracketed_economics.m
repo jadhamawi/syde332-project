@@ -11,7 +11,7 @@ vacanicies_proportion = 0.1;
 T = 3;
 
 % number of economic brackets
-E = 3;
+E = 5;
 
 % colors
 map = [0 0 0; 1 0 0; 0 1 0; 0 0 1];
@@ -20,7 +20,8 @@ map = [0 0 0; 1 0 0; 0 1 0; 0 0 1];
 % minimum fraction of friends that I need to be satisfied (samenes)
 sameness = 4/8;
 
-max_iterations = 10000;
+
+max_iterations = 2000;
 
 % initialize
 z = zeros(n,n,3);
@@ -29,9 +30,9 @@ for i=1:n
     for j=1:n
         if rand > vacanicies_proportion
             z(i,j,1) = randi(T);
-            z(i,j,2) = randi(E);
+            z(i,j,2) = randi(E); % individual wealth
         end
-        z(i,j,3) = randi(E);
+        z(i,j,3) = randi(E);    % home prices
     end
 end
 
@@ -284,16 +285,15 @@ title('Segregation index');
 axis([0 inf 0 100]);
 xlabel('Iteration'), ylabel('Segregation %');
 
-figure,
-imagesc(z(:,:,2));
-colormap(map);
-axis('off');
-title('final by economics');
+% figure,
+% imagesc(z(:,:,2));
+% axis('off');
+% title('final by economics');
 
 
 %% plot number of moves
-iterant = 1:max_iterations;
-figure,
-plot(log10(iterant), log10(number_of_moves));
-xlabel('iteration'),ylabel('number of moves');
+% iterant = 1:max_iterations;
+% figure,
+% plot(log10(iterant), log10(number_of_moves));
+% xlabel('iteration'),ylabel('number of moves');
 

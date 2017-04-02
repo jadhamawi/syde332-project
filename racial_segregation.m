@@ -8,7 +8,7 @@ n = 40;
 vacanicies_proportion = 0.1;
 
 % number of races
-T = 2;
+T = 3;
 
 % colors
 map = [0 0 0; 1 0 0; 0 1 0; 0 0 1];
@@ -208,11 +208,12 @@ for k=1:max_iterations
             end
             
             SAME(i,j) = s/num_neighbours;
+            
         end
     end
     
-    %mean(mean(SAME))
-    seg_index = [seg_index, (mean(mean(SAME))-0.5)*2];
+    mean(SAME)
+    seg_index = [seg_index, (mean(mean(SAME))-0.5)*2*100];
     
 end
 
@@ -221,13 +222,14 @@ seg_index
 figure,
 imagesc(z);
 colormap(map);
-title('Simulation results of Schelling model');
+title(['Schelling model, Sameness ' num2str(sameness*8) '/8']);
 axis('off');
 
 figure,
 plot(seg_index);
 title('Segregation index');
-axis([0 inf 0 1])
+axis([0 inf 0 100]);
+xlabel('Iteration'), ylabel('Segregation %');
 
 %% plot number of moves
 % iterant = 1:max_iterations;

@@ -2,13 +2,13 @@
 % Racial Segregation Model Attempt
 
 % size of grid
-n = 30;
+n = 40;
 
 % proportion of vacancies
 vacanicies_proportion = 0.1;
 
 % number of races
-T = 3;
+T = 2;
 
 % number of economic brackets
 E = 2;
@@ -120,13 +120,15 @@ for k=1:max_iterations
 
                 end
             end
-%             imagesc(z);
-%             colormap(map);
-%             axis('off');
-%             pause(0.0001);
 
         end
     end
+    
+    imagesc(z);
+    colormap(map);
+    axis('off');
+    pause(0.1);
+            
     if number_of_moves(k) == 0
         disp('number of iterations to convergence: ')
         disp(k);
@@ -134,13 +136,122 @@ for k=1:max_iterations
         disp(sum(number_of_moves))
         break;
     end
+    
+    % determine segregation index
+    SAME = [];
+
+    for i=1:n
+        for j=1:n
+
+            race = z(i,j,1);
+            s = 0;
+
+            % Check that z(i,j,1) isn't a vacancy
+            if race
+                num_neighbours = 0;
+
+                if i > 1 
+                    if z(i-1,j,1) == race
+                        s = s + 1;
+                    end
+                    
+                    if z(i-1,j,1)
+                        num_neighbours = num_neighbours + 1;
+                    end
+                    
+                    if j > 1 
+                        if z(i-1,j-1,1) == race
+                            s = s + 1;
+                        end
+                        
+                        if z(i-1,j-1,1)
+                            num_neighbours = num_neighbours + 1;
+                        end
+                    end
+                    
+                    if j < n 
+                        if z(i-1, j+1, 1) == race
+                            s = s + 1;
+                        end
+                        
+                        if z(i-1, j+1, 1)
+                            num_neighbours = num_neighbours + 1;
+                        end
+                    end
+                end
+
+                if i < n 
+                    if z(i+1,j,1) == race
+                        s = s + 1;
+                    end
+                    
+                    if z(i+1, j, 1)
+                        num_neighbours = num_neighbours + 1;
+                    end
+                    
+                    if j > 1 
+                        if z(i+1,j-1,1) == race
+                            s = s + 1;
+                        end
+                        
+                        if z(i+1, j-1, 1)
+                            num_neighbours = num_neighbours + 1;
+                        end
+                    end
+                    
+                    if j < n
+                        if z(i+1, j+1, 1) == race
+                            s = s + 1;
+                        end
+                        
+                        if z(i+1, j+1, 1)
+                            num_neighbours = num_neighbours + 1;
+                        end
+                    end
+ 
+                end
+
+                if j > 1 
+                    if z(i,j-1,1) == race
+                        s = s + 1;
+                    end
+                    
+                    if z(i, j-1, 1)
+                        num_neighbours = num_neighbours + 1;
+                    end
+                end
+
+                if j < n 
+                    if z(i,j+1,1) == race
+                        s = s + 1;
+                    end
+                    
+                    if z(i, j+1, 1)
+                        num_neighbours = num_neighbours + 1;
+                    end
+                end 
+                
+            end
+            
+            SAME(i,j) = s/num_neighbours;
+        end
+    end
+    
+    mean(mean(SAME));
+    seg_index = [seg_index, (mean(mean(SAME))-0.5)*T*100];
 end
+
+figure,
+plot(seg_index);
+title('Segregation index');
+axis([0 inf 0 100]);
+xlabel('Iteration'), ylabel('Segregation %');
 
 figure,
 imagesc(z(:,:,1));
 colormap(map);
 axis('off');
-title('final by race  - binary income');
+title(['Binary model, Sameness ' num2str(sameness*8) '/8']);
 
 % figure,
 % imagesc(z(:,:,2));

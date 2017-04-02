@@ -8,7 +8,7 @@ n = 40;
 vacanicies_proportion = 0.1;
 
 % number of races
-T = 2;
+T = 3;
 
 % number of economic brackets
 E = 3;
@@ -18,7 +18,7 @@ map = [0 0 0; 1 0 0; 0 1 0; 0 0 1];
 
 % racial dispreference parameter
 % minimum fraction of friends that I need to be satisfied (samenes)
-sameness = 2/8;
+sameness = 4/8;
 
 max_iterations = 10000;
 
@@ -266,7 +266,7 @@ for k=1:max_iterations
     end
     
     mean(mean(SAME));
-    seg_index = [seg_index, (mean(mean(SAME))-0.5)*2];
+    seg_index = [seg_index, (mean(mean(SAME))-0.5)*T*100];
     
     
 end
@@ -276,12 +276,13 @@ figure,
 imagesc(z(:,:,1));
 colormap(map);
 axis('off');
-title('final by race - bracketed income, housing prices random');
+title(['Schelling model with bracketed economics, Sameness ' num2str(sameness*8) '/8']);
 
 figure,
 plot(seg_index);
-title('segregation index');
-axis([0 inf 0 1])
+title('Segregation index');
+axis([0 inf 0 100]);
+xlabel('Iteration'), ylabel('Segregation %');
 
 figure,
 imagesc(z(:,:,2));

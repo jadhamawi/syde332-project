@@ -7,7 +7,7 @@ function seg = calculate_seg_index(z)
 
             race = z(i,j,1);
             s = 0;
-            num_neighbours = 0;
+            num_neighbours = count_neighbours(z,i,j);
 
             % Check that z(i,j,1) isn't a vacancy
             if race
@@ -15,28 +15,15 @@ function seg = calculate_seg_index(z)
                     if z(i-1,j,1) == race
                         s = s + 1;
                     end
-                    
-                    if z(i-1,j,1)
-                        num_neighbours = num_neighbours + 1;
-                    end
-                    
                     if j > 1 
                         if z(i-1,j-1,1) == race
                             s = s + 1;
-                        end
-                        
-                        if z(i-1,j-1,1)
-                            num_neighbours = num_neighbours + 1;
                         end
                     end
                     
                     if j < n 
                         if z(i-1, j+1, 1) == race
                             s = s + 1;
-                        end
-                        
-                        if z(i-1, j+1, 1)
-                            num_neighbours = num_neighbours + 1;
                         end
                     end
                 end
@@ -46,27 +33,15 @@ function seg = calculate_seg_index(z)
                         s = s + 1;
                     end
                     
-                    if z(i+1, j, 1)
-                        num_neighbours = num_neighbours + 1;
-                    end
-                    
                     if j > 1 
                         if z(i+1,j-1,1) == race
                             s = s + 1;
-                        end
-                        
-                        if z(i+1, j-1, 1)
-                            num_neighbours = num_neighbours + 1;
                         end
                     end
                     
                     if j < n
                         if z(i+1, j+1, 1) == race
                             s = s + 1;
-                        end
-                        
-                        if z(i+1, j+1, 1)
-                            num_neighbours = num_neighbours + 1;
                         end
                     end
  
@@ -76,19 +51,12 @@ function seg = calculate_seg_index(z)
                     if z(i,j-1,1) == race
                         s = s + 1;
                     end
-                    
-                    if z(i, j-1, 1)
-                        num_neighbours = num_neighbours + 1;
-                    end
+
                 end
 
                 if j < n 
                     if z(i,j+1,1) == race
                         s = s + 1;
-                    end
-                    
-                    if z(i, j+1, 1)
-                        num_neighbours = num_neighbours + 1;
                     end
                 end 
                 

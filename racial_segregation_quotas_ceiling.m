@@ -5,7 +5,7 @@
 n = 40;
 
 % neighbourhood radius
-radius = 1;
+radius = 4;
 
 % proportion of vacancies
 vacanicies_proportion = 0.1;
@@ -27,8 +27,13 @@ z = zeros(n);
 
 for i=1:n
     for j=1:n
-        if rand > vacanicies_proportion
-            z(i,j) = randi(T);
+        race_value = rand;
+        if race_value > vacanicies_proportion
+            if race_value < 0.76
+                z(i,j) = 1; % Chinese homies
+            else
+                z(i,j) = 2; % Malay homies ? can add more ethnic diversity later 
+            end
         end
     end
 end
@@ -50,13 +55,17 @@ seg_index = [];
 for k=1:max_iterations
     for i=randperm(n);
         for j=randperm(n);
+            
             if z(i,j)~=0
+                
+                race = z(i,j);
                 
                 not_like_me = count_not_like_me(z,i,j);
                 
                 friends = total_neighbours - not_like_me;
+                
 
-                if friends/total_neighbours < sameness % need to move
+                if friends/total_neighbours < sameness % need to move!
                     
                     idx = randperm(length(pos_vacancies));
                     
@@ -64,13 +73,14 @@ for k=1:max_iterations
                     
                     new_x = pos_vacancies(idx(p),1);
                     new_y = pos_vacancies(idx(p),2);
-                    meets_quota = check_quota(z,i,j,new_x,new_y,T,radius, false);
+                    
+                    meets_quota = check_quota(z,i,j,new_x,new_y,T,radius, true);
                     
                     while meets_quota ~= 1
                         p = p+1;
                         new_x = pos_vacancies(idx(p),1);
                         new_y = pos_vacancies(idx(p),2);
-                        meets_quota = check_quota(z,i,j,new_x,new_y,T,radius, false);
+                        meets_quota = check_quota(z,i,j,new_x,new_y,T,radius, true);
                     end
                     
                     if meets_quota && p <= length(pos_vacancies)
@@ -117,4 +127,3 @@ axis([0 inf 0 1])
 % iterant = 1:max_iterations;
 % figure,
 % plot(log10(iterant), log10(number_of_moves));
-

@@ -1,6 +1,7 @@
-function meets_quota = check_quota(z,old_x,old_y,new_x,new_y,T,radius)
-    
+function meets_quota = check_quota(z,old_x,old_y,new_x,new_y,T,radius,bounded)
+ 
 meets_quota = 0;
+race_quotas = [0.84, 0.22, 0.10];
 
 n = length(z);
 
@@ -36,12 +37,21 @@ for i = xbounds
     end
 end
 
-[Y, I] = min(race_counts);
-
-if z(old_x,old_y,1) == I
-    meets_quota = 1;
-end
+if bounded
+    race = z(old_x, old_y, 1);
+  
+    if race_counts(race)/neighbourhood < race_quotas(race) % Check if new neighbourbood exceeds LKY's ceilings
+        meets_quota = 1;
+    end
     
+else
+    [NUM_RACE, RACE_VALUE] = min(race_counts); % Check if will be minority in new neighbourhood
+    if z(old_x,old_y,1) == RACE_VALUE
+        meets_quota = 1;
+    end  
+end
+
+
 
 
 

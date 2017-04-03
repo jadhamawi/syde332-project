@@ -8,7 +8,7 @@ n = 40;
 vacanicies_proportion = 0.1;
 
 % number of races
-T = 3;
+T = 2;
 
 % colors
 map = [0 0 0; 1 0 0; 0 1 0; 0 0 1];
@@ -24,8 +24,16 @@ z = zeros(n);
 
 for i=1:n
     for j=1:n
-        if rand > vacanicies_proportion
-            z(i,j) = randi(T);
+%         if rand > vacanicies_proportion
+%             z(i,j) = randi(T);
+%         end
+        race_value = rand;
+        if race_value > vacanicies_proportion
+            if race_value < 0.76
+                z(i,j) = 1; % Chinese homies
+            else
+                z(i,j) = 2; % Malay homies ? can add more ethnic diversity later 
+            end
         end
     end
 end
@@ -74,7 +82,7 @@ for k=1:max_iterations
         end
     end
     
-    seg_index = [seg_index, calculate_seg_index(z)];
+    seg_index = [seg_index, calculate_seg_index(z)*100];
     
     if number_of_moves(k) == 0
         disp('number of iterations to convergence: ')

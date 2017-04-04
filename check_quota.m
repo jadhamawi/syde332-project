@@ -1,5 +1,5 @@
 function meets_quota = check_quota(z,old_x,old_y,new_x,new_y,T,radius,bounded)
- 
+
 meets_quota = 0;
 race_quotas = [0.84, 0.22, 0.10];
 
@@ -45,10 +45,15 @@ if bounded
     end
     
 else
-    [NUM_RACE, RACE_VALUE] = min(race_counts); % Check if will be minority in new neighbourhood
-    if z(old_x,old_y,1) == RACE_VALUE
+%     %must be minority in new neighbourhood
+%     [NUM_RACE, RACE_VALUE] = min(race_counts); % Check if will be minority in new neighbourhood
+%     if z(old_x,old_y,1) == RACE_VALUE
+%         meets_quota = 1;
+%     end  
+    [NUM_RACE, RACE_VALUE] = max(race_counts);  % Check if will be majority in new neighbourhood
+    if z(old_x,old_y,1) ~= RACE_VALUE
         meets_quota = 1;
-    end  
+    end
 end
 
 

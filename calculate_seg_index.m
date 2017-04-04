@@ -64,11 +64,12 @@ function seg = calculate_seg_index(z)
             
             if num_neighbours~=0
                 SAME(i,j) = s/num_neighbours;
+                SAME(i,j) = (SAME(i,j)-0.5)*2;                    
             else
                 SAME(i,j) = 1;
         end
     end
     
-    seg = (mean(mean(SAME))-0.5)*2;
+    seg = mean(mean(SAME));
     
 end
